@@ -14,13 +14,13 @@ const SOLVE_THRESHOLD = 23;
 
 // VERSCHLÜSSELTE KOORDINATEN (Base64 + ROT13 + Salt "JUKEBOX21")
 // Dekodierung: rot13(decodeURIComponent(escape(atob(COORDS_ENCODED)))).replace("JUKEBOX21","")
-const COORDS_ENCODED = 'QSA1MMKwIDIzLjM1N+KAsiBSIDExwrAgNTUuNDMw4oCyV0hYUk9CSzIx';
+const COORDS_ENCODED = 'QSA1MMKwIDE2LjQzNiBSIDAxMcKwIDU4LjUxMldIWFJPQksyMQ==';
 // Dekodierung in showCoords():
 // rot13(decodeURIComponent(escape(atob(COORDS_ENCODED)))).replace("JUKEBOX21","")
 
 // VERSCHLÜSSELTE JOKER-KONFIGURATION (Base64 + ROT13 + Salt "JUKEBOX21")
 // Klartext: {"codes":["1234","2004"],"pool":[1,2,3,4,5,6,7,8,9,10],"count":1}
-const JOKER_CONFIG_ENCODED = 'eyJwYnFyZiI6WyIyMDA0IiwiMTc5MiJdLCJjYmJ5IjpbMSw0LDcsMTUsMTddLCJwYmhhZyI6MX1XSFhST0JLMjE=';
+const JOKER_CONFIG_ENCODED = 'eyJwYnFyZiI6WyIyMDA0IiwiMTc5MiJdLCJjYmJ5IjpbMSwzLDcsMTIsMjNdLCJwYmhhZyI6MX1XSFhST0JLMjE=';
 
 // ---------------------------------------------------------------------------
 // 2. Interner Modul-State
@@ -454,10 +454,50 @@ function updateProgress() {
   if (countEl) countEl.textContent = count;
 
   // Koordinaten anzeigen wenn Schwelle erreicht
+  const coordsBtn = document.getElementById('show-coords-btn');
   if (count >= SOLVE_THRESHOLD) {
     showCoords();
+  } else if (coordsBtn) {
+    coordsBtn.hidden = true;
   }
 }
+
+// ---------------------------------------------------------------------------
+// 8b. Fortschritt zurücksetzen (Reset)
+// ---------------------------------------------------------------------------
+
+/**
+ * Fragt eine Bestätigung ab und setzt bei Bestätigung den gesamten Spielfortschritt zurück.
+ */
+function handleReset() {
+  if (confirm('Wirklich alles zurücksetzen?')) {
+    State.resetProgress();
+    renderSongGrid();
+    updateProgress();
+
+    // Eventuell geöffnetes Koordinaten-Overlay schließen
+    const coordsOverlay = document.getElementById('coords-overlay');
+    if (coordsOverlay) {
+      coordsOverlay.classList.remove('visible');
+      coordsOverlay.hidden = true;
+      coordsOverlay.setAttribute('hidden', '');
+    }
+
+    // Joker-Eingabe ggf. wieder freigeben
+    const jokerInput = document.getElementById('info-joker-input');
+    if (jokerInput) {
+      jokerInput.disabled = false;
+      jokerInput.value = '';
+    }
+    const jokerSubmitBtn = document.getElementById('info-joker-submit-btn');
+    if (jokerSubmitBtn) {
+      jokerSubmitBtn.disabled = false;
+    }
+
+    showToast('toast_reset', 'Fortschritt zurückgesetzt');
+  }
+}
+window.handleReset = handleReset;
 
 // ---------------------------------------------------------------------------
 // 9. Koordinaten anzeigen
@@ -670,7 +710,7 @@ function showToast(key, customText) {
 
   // CSS-Klassen fuer Farbstyling (Gruen/Rot) setzen
   toast.classList.remove('correct', 'wrong');
-  if (key === 'toast_correct' || key === 'toast_already_solved' || key === 'toast_copied' || key === 'share-copied' || key === 'toast_joker_success') {
+  if (key === 'toast_correct' || key === 'toast_already_solved' || key === 'toast_copied' || key === 'share-copied' || key === 'toast_joker_success' || key === 'toast_reset') {
     toast.classList.add('correct');
   } else if (key === 'toast_wrong' || key === 'toast_file_error' || key === 'toast_audio_error' || key === 'toast_joker_invalid' || key === 'toast_joker_already_used') {
     toast.classList.add('wrong');
@@ -859,6 +899,8 @@ function handleJokerSubmit() {
  *  - Event-Listener für Modal, Overlay und Sprach-Toggle registrieren
  */
 function init() {
+  State.loadProgress();
+
   // Grid und Fortschritt
   renderSongGrid();
   updateProgress();

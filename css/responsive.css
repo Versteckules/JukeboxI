@@ -17,6 +17,7 @@
 #coords-close,
 #lang-toggle,
 #share-btn,
+#reset-btn,
 #share-copy-btn,
 #share-native-btn,
 #share-close-btn,
@@ -95,6 +96,13 @@
   }
 
   #share-btn {
+    font-size: 12px;
+    padding: 5px 8px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  #reset-btn {
     font-size: 12px;
     padding: 5px 8px;
     white-space: nowrap;
@@ -397,6 +405,13 @@
   }
 
   #share-btn {
+    font-size: 12px;
+    padding: 6px 8px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  #reset-btn {
     font-size: 12px;
     padding: 6px 8px;
     white-space: nowrap;

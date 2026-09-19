@@ -256,6 +256,34 @@ body {
   display: none !important;
 }
 
+#reset-btn {
+  background: linear-gradient(135deg, #7a1818, #440c0c);
+  color: #ffffff;
+  border: 1px solid #b83232;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-family: var(--font-retro);
+  font-size: 0.46rem;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(122, 24, 24, 0.5);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+#reset-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 16px rgba(184, 50, 50, 0.8);
+}
+
+#reset-btn:active {
+  transform: scale(0.97);
+}
+
+#reset-btn[hidden] {
+  display: none !important;
+}
+
 
 /* --------------------------------------------------------------------------
    4. Jukebox-Gehäuse (#jukebox-cabinet)
